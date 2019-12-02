@@ -2,7 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define MAX 100
+#define inputMax 100
+#define resultMax 100000000
 
 struct node{
     int key;
@@ -12,19 +13,34 @@ struct node{
 
 node* newNode(node*, int);
 node* insertNode(node*, int);
+int** createDoubleArray(int m, int n){
+    int* values = calloc(m*n, sizeof(int));
+    int** rows = malloc(n*sizeof(int*));
+    for (int i=0; i<n; ++i)
+    {
+        rows[i] = values + i*m;
+    }
+    return rows;
+}
+
+void freeArray(int** arr){
+    free(**arr);
+    free(*arr);
+}
 
 int main() {
     //initilize input sequence
     printf("Please enter the sequence to build the Binary Search Tree. \n");
 
-    char input[MAX];
-    int nodes[MAX];
-    fgets(input, MAX, stdin);
+    char input[inputMax];
+    int nodes[inputMax];
+
+    fgets(input, inputMax, stdin);
     printf("%s", input);
     // Extract the first token
     char * token = strtok(input, " ");
     // loop through the string to extract all other tokens
-    for (int i = 0; i < MAX ; ++i) {
+    for (int i = 0; i < inputMax ; ++i) {
         nodes[i] = 'a';
     }
     int counter = 0;
@@ -42,6 +58,13 @@ int main() {
         int deneme = nodes[j];
         root = insertNode(root, deneme);
     }
+
+    //Create 2D Array
+    int** arr = createDoubleArray(2,2);
+    arr[0][0] = 1;
+    arr[0][1] = 1;
+    arr[1][0] = 2;
+    arr[1][1] = 2;
 
     return 0;
 }
