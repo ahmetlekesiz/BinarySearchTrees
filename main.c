@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <rpcndr.h>
 
 #define inputMax 100
 #define resultMax 100000000
@@ -14,19 +15,89 @@ struct node{
 node* newNode(node*, int);
 node* insertNode(node*, int);
 int** createDoubleArray(int m, int n){
-    int* values = calloc(m*n, sizeof(int));
-    int** rows = malloc(n*sizeof(int*));
-    for (int i=0; i<n; ++i)
+    int* values = calloc(n * m, sizeof(int));
+    int** rows = malloc(m * sizeof(int*));
+    for (int i=0; i < m; ++i)
     {
-        rows[i] = values + i*m;
+        rows[i] = values + i * n;
     }
     return rows;
 }
-
+/*
 void freeArray(int** arr){
     free(**arr);
     free(*arr);
+}*/
+
+void initializeArray(int* arr, int defaultValue, int arrSize){
+    for (int i = 0; i < arrSize; ++i) {
+        arr[i] = defaultValue;
+    }
 }
+
+
+int lengthOfArray(int* arr, int arrSize){
+    //assume array initialized to -1
+    int counter = 0;
+    for (int i = 0; i < arrSize; ++i) {
+        if(arr[i] == -1){
+            return counter;
+        }
+        counter++;
+    }
+    return arrSize;
+}
+
+int* mergeTwoArrays(int* firstArray, int* secondArray, int firstSize, int secondSize){
+    int lenFirst = lengthOfArray(firstArray, firstSize);
+    int lenSecond = lengthOfArray(secondArray, secondSize);
+    int lenResult = lenFirst + lenSecond;
+    int iter = lenFirst;
+    int result[lenResult];
+    int *p = result;
+    for (int i = 0; i < lenFirst ; ++i) {
+        result[i] = firstArray[i];
+    }
+    for (int j = 0; j < lenSecond ; ++j) {
+        result[iter] = secondArray[j];
+        iter++;
+    }
+    return p;
+}
+
+int isArrayEmpty(int* arr){
+    if(arr[0] == -1){
+        return 1;
+    }else{
+        return 0;
+    }
+}
+
+int** findCombinations(int* support, int* firstSubtree, int* secondSubtree, int suppSize, int firstSize, int secondSize, int** result){
+    int resultCounter = 0;
+    //if firstSubtree == 0 or secondSubtree == 0, join and return
+    if(isArrayEmpty(firstSubtree) == 1 || isArrayEmpty(secondSubtree) == 1){
+        //results.append(support + firstSubtree + secondSubtree)
+        int firstMergeSize = suppSize + firstSize;
+        int *firstMerge;
+        firstMerge = mergeTwoArrays(support, firstMerge, suppSize, firstSize);
+        int* resultArray;
+        resultArray = mergeTwoArrays(firstMerge, secondSubtree, firstMergeSize, secondSize);
+        result[resultCounter] = resultArray;
+        resultCounter++;
+        return result;
+    }
+    //****For First Subtree****//
+    //move the item which in the left from firstSubtree to supportArray
+    findCombinations(support, firstSubtree, secondSubtree, suppSize, firstSize, secondSize, result);
+    //return back the item which is in the right to firstSubtree
+
+    //****For Second Subtree****//
+    //move the item which in the left from secondSubtree to supportArray
+    //findCombinations()
+    //return back the item which is in the right to firstSubtree
+}
+
 
 int main() {
     //initilize input sequence
@@ -60,11 +131,19 @@ int main() {
     }
 
     //Create 2D Array
-    int** arr = createDoubleArray(2,2);
+    int** arr = createDoubleArray(3,2);
     arr[0][0] = 1;
     arr[0][1] = 1;
     arr[1][0] = 2;
     arr[1][1] = 2;
+    arr[2][0] = 3;
+    arr[2][1] = 3;
+
+    for (int k = 0; k < 3 ; ++k) {
+        for (int i = 0; i < 2 ; ++i) {
+            printf("%d", arr[k][i]);
+        }
+    }
 
     return 0;
 }
